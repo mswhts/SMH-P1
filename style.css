@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5ead7;
+    color: #3d2b1f;
+    text-allign: center;
+}
+
+button {
+    padding: 10px 18px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#weather {
+    background: #fff8ed;
+    padding: 15px;
+    margin: 20px auto;
+    max-width: 400px;
+}
+
+#farm {
+    display: grid;
+    grid-template-columns: repeat(10, 35px);
+    gap: 4px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.plot {
+    width: 35px;
+    height: 35px;
+    background: #a9784f;
+    color: white;
+    display: flex;
+    align-items: center;
+justify-content: center;
+font-size: 11px;
+}
