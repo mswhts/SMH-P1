@@ -46,7 +46,54 @@ function updateTime() {
     }
 updateWeather();
 updateSoil();
+updateCrops();
 }
+
+function plantCrop(plot, cropType) {
+    if (plot.crop != null) {
+        return;
+    }
+    
+    plot.crop = {
+        type: cropType,
+        growth: 0,
+        health: crops[cropType].health
+    };
+}
+
+function waterPlot(plot) {
+    plot.soil.moisture += 20;
+
+    if(plot.soil.moisture > 100) {
+        plot.soil.moisture = 100;
+    }
+}
+
+function updateCrops() {
+    for (let plot of simulation.farm.plots) {
+
+        if (plot.crop != null) {
+            let crop = plot.crop;
+            let cropInfo = crops[crop.type];
+
+            let growthAmount = 100 / cropInfo.growthTime;
+
+            if (plot.soil.moisture >= cropInfo.idealMoisture) {
+                crop.growth += growthAmount;
+            } else {
+                crop.growth += growthAmount * 0.5;
+                crop.health -= 1;
+            }
+            if (crop.growth > 100) {
+                crop.health = 100;
+            }
+            if (crop.health < 0) {
+                crop.health = 0;
+            }
+        }
+    }
+}
+
 function updateSoil() {
     for (let plot of simulation.farm.plots) {
         plot.soil.moisture += simulation.weather.rainfall;
@@ -93,4 +140,6 @@ function updateWeather() {
         simulation.weather.wind = 0;
     }
 }
+
+
 
