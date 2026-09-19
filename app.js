@@ -1,3 +1,5 @@
+let selectedCrop = "wheat";
+
 function showWeather() {
     let weather = simulation.weather;
 
@@ -19,11 +21,65 @@ function showFarm(){
         let plotElement = document.createElement("div");
 
         plotElement.className = "plot";
-        plotElement.textContent = Math.round(plot.soil.moisture);
+        
+        if (plot.crop == null) {
+            plotElement.textContent = Math.round(plot.soil.moisture);
+        } else {
+            let cropInfo = crops[plot.crop.type];
+
+           let growth = plot.crop.growth;
+let stage;
+
+if (growth < 33) {
+    stage = 0;
+} else if (growth < 66) {
+    stage = 1;
+} else {
+    stage = 2;
+}
+
+plotElement.textContent = cropInfo.stages[stage];
+
+if (growth >= 100) {
+    plotElement.textContent = "✨" + cropInfo.stages[2];
+}
+        }
+plotElement.addEventListener("click", function() {
+    if (plot.crop == null) {
+        plantCrop(plot, selectedCrop);
+    } else {
+        waterPlot(plot);
+    }
+
+    showCropInfo(plot);
+    updateScreen();
+});
 
         farm.appendChild(plotElement);
 
     }
+}
+function showCropInfo(plot) {
+    let info = document.getElementById("cropInfo");
+
+    if (plot.crop == null) {
+        info.innerHTML =`
+        <p>Empty plot</p>
+        <p>Soil moisture: ${Math.round(plot.soil.moisture)}</p>
+        <p>Soil quality: ${plot.soil.quality}</p>
+        <p>Nutrients: ${plot.soil.nutrients}</p>
+        `;
+
+        return;
+    }
+
+    let cropInfo = crops[plot.crop.type];
+
+    info.innerHTML = ` <p>Crop: ${cropInfo.name}</p>
+        <p>Growth: ${Math.round(plot.crop.growth)}%</p>
+        <p>Health: ${Math.round(plot.crop.health)}%</p>
+        <p>Soil moisture: ${Math.round(plot.soil.moisture)}</p>
+        `;
 }
 
 function updateScreen(){
@@ -31,9 +87,35 @@ function updateScreen(){
     showFarm();
 }
 
+document.getElementById("wheatButton").addEventListener("click", function() {
+    selectedCrop = "wheat";
+});
+
+document.getElementById("cornButton").addEventListener("click", function() {
+    selectedCrop = "corn";
+});
+
+document.getElementById("carrotButton").addEventListener("click", function() {
+    selectedCrop = "carrot";
+});
+
 document.getElementById("advanceButton").addEventListener("click", function(){
     updateTime();
     updateScreen();
 });
 
-updateScreen();
+document.getElementById("rainfallInput").addEventListener("input", function() {
+    simulation.weather.rainfall = Number(this.value);
+
+    document.getElementById("rainfallValue").textContent = this.value;
+
+    updateScreen();
+});
+
+document.getElementById("temperatureInput").addEventListener("input", function() {
+    simulation.weather.temperature = Number(this.value);
+
+    document.getElementById("temperatureValue").textContent = this.value;
+
+    updateScreen();
+});
