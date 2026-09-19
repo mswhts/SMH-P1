@@ -49,12 +49,12 @@ updateSoil();
 }
 function updateSoil() {
     for (let plot of simulation.farm.plots) {
-        plot.soil.moisture += ssimulation.weather.rainfall;
+        plot.soil.moisture += simulation.weather.rainfall;
 
         let evaporation = simulation.weather.temperature * 0.05;
         evaporation += simulation.weather.sunlight * 0.1;
 
-        plot.soil.moisutre -= evaporation;
+        plot.soil.moisture -= evaporation;
 
         if (plot.soil.moisture < 0) {
             plot.soil.moisture = 0;
