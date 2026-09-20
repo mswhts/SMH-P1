@@ -87,3 +87,14 @@ max-width: 500px;
     font-weigth: bold;
 }
  
+#seasonInfo {
+    background: #fff8ed;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+#seasonInfo p {
+    margin: 8px;
+}
+
+ 
