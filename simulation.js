@@ -35,12 +35,33 @@ let simulation = {
             windMin: 8,
             windMax: 20
         },
+spring: {
+    name: "Spring",
+    startDay: 29,
+    temperatureMin: 12,
+    temperatureMax: 26,
+    rainfallMin: 1,
+    rainfallMax: 9,
+    sunlightMin: 7,
+    sunlightMax: 12,
+    humidityMin: 50,
+    humidityMax: 75,
+    windMin: 5,
+windMax: 16
+},
 summer: {
     name: "Summer",
     startDay: 43,
     temperatureMin: 18,
 temperatureMax: 18,
-
+rainfallMin: 0,
+rainfallMax: 6,
+sunlightMin: 9,
+sunlightMax: 6,
+humidityMin: 35,
+humidityMax: 65,
+windMin: 4,
+windMax: 14
 
 }
 
@@ -133,7 +154,9 @@ function updateTime() {
     if (simulation.hour >= 24) {
         simulation.hour = 0;
         simulation.day++;
+        updateSeason();
     }
+    updateSeasonalWeather();
 updateWeather();
 updateWeatherEvent();
 updateWeatherEventDuration();
@@ -227,16 +250,29 @@ function updateCrops() {
             let cropInfo = crops[crop.type];
 
             let growthAmount = 100 / cropInfo.growthTime;
+            let environmentalModifier = calculateEnvironmentalGrowthModifier(plot);
+            
 
             if (plot.soil.moisture >= cropInfo.idealMoisture) {
-                crop.growth += growthAmount;
+                 growthAmount *= 1;
             } else {
-                crop.growth += growthAmount * 0.5;
+                 growthAmount * 0.5;
             }
+growthAmount *= environmentalModifier;
+
+crop.growth += growthAmount;
+
+if (crop.growth > 100) {
+    crop.growth = 100;
+}
+
+            
             calculateCropHealth(plot);
+let calculateWeatherHealthModifier = calculateWeatherHealthModifier(plot);
+crop.health += calculateWeatherHealthModifier;
 
             if (crop.growth > 100) {
-                crop.health = 100;
+                crop.growth = 100;
             }
             if (crop.health < 0) {
                 crop.health = 0;
@@ -784,4 +820,95 @@ createFarmPlots();
 lastHarvest = "";
 updateScreen();
 
+}
+
+function getCurrentSeason() {
+    if (simulation.day >= 43) {
+        return "Summer";
+    }
+if (simulation.day >= 29) {
+    return "Spring";
+}
+if (simulation.day >= 15) {
+    return "Winter";
+}
+return "autumn";
+
+}
+
+function updateSeason() {
+    simulation.season = getCurrentSeason();
+}
+function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+}
+
+function updateSeasonalWeather() {
+    let season = simulation.seasons[simulation.season];
+
+simulation.weather.temperature = randomBetween(season.temperatureMin, season.temperatureMax);
+simulation.weather.rainfall = randomBetween(season.rainfallMin, season.rainfallMax);
+simulation.weather.sunlight = randomBetween(season.sunlightMin, season.sunlightMax);
+simulation.weather.humidity = randomBetween(season.humidityMin, season.humidityMax);
+simulation.weather.wind = randomBetween(season.windMin, season.windMax);
+
+}
+
+function calculateEnvironmentalGrowthModifier(plot) {
+    let cropInfo = crops[plot.crop.type];
+    let temperature = simulation.weather.temperature;
+    let humidity = simulation.weather.humidity;
+    let sunlight = simulation.weather.sunlight;
+
+    let modifier = 1;
+    if (
+        temperature < cropInfo.idealTemperature.min || temperature > cropInfo.idealTemperature.max
+    )
+     {
+        modifier *= 0.7;
+     }
+     if (humidity < 35 || humidity > 85) {
+        modifier *=0.8;
+     }
+if (sunlight < 4) {
+    modifier *= 0.7;
+} else if (sunlight > 12) {
+    modifier *= 0.9;
+}
+if (simulation.season == "winter") {
+    modifier *= 0.85;
+}
+
+if (simulation.season == "summer") {
+    if (temperature > cropInfo.idealTemperature.max) {
+        modifier *= 0.75;
+    }
+}
+return modifier;
+}
+
+function calculateWeatherHealthModifier(plot) {
+    let cropInfo = crops[plot.crop.type];
+    let temperature = simulation.weather.temperature;
+    let moisture = plot.soil.moisture;
+    let modifier = 0;
+
+    if (
+        temperature < cropInfo.idealTemperature.min || temperature > cropInfo.idealTemperature.max
+    ) {
+        modifier -= 1;
+    }
+    if (moisture < cropInfo.idealMoisture - 25) {
+        modifier -= 1;
+    }
+    if (moisture > cropInfo.idealMoisture + 30) {
+        modifier -= 1;
+    }
+    if (simulation.weather.humidity > 90) {
+        modifier -= 1;
+    }
+    if (simulation.weather.wind > 18) {
+        modifier -= 1;
+    }
+    return modifier;
 }
