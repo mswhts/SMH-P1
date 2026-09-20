@@ -29,6 +29,13 @@
     <span id="temperatureValue">20</span>°C
 </div>
 
+<div>
+    <label for="sunlightInput">Sunlight:</label>
+    <input type="range" id="sunlightInput" min="0" max="14" value="8">
+
+    <span id="sunlightValue">8</span> hours
+</div>
+
     <button id="advanceButton">Advance 1 Hour</button>
 
 
@@ -37,7 +44,17 @@
 <div id="cropInfo">
 <p>Click a plot to see its information</p>
 </div>
+<div id="harvestStats">
+    <h3>Harvest Statistics</h3>
+    <p>Total crops harvested: <span id="totalCrops">0</span></p>
+<p>Total yield: <span id="totalYield">0</span></p>
+<p>Wheat yield: <span id="wheatYield">0</span></p>
+<p>Corn yield: <span id="cornYield">0</span></p>
+<p>Carrot yield: <span id="carrotYield">0</span></p>
+</div>
+
      <script src="crops.js"></script>
+     <script src="weather.js"></script>
     <script src="simulation.js"></script>
     <script src="app.js"></script>
 </body>
