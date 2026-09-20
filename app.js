@@ -1,4 +1,5 @@
 let selectedCrop = "wheat";
+let lastHarvest = "";
 
 function showWeather() {
     let weather = simulation.weather;
@@ -10,6 +11,7 @@ function showWeather() {
         <p>Humidity: ${weather.humidity.toFixed(1)}%</p>
         <p>Rainfall: ${weather.rainfall.toFixed(1)}</p>
         <p>Wind: ${weather.wind.toFixed(1)}</p>
+        <p>Weather event: ${simulation.weatherEvent}</p>
     `;
 }
 function showFarm(){
@@ -42,16 +44,24 @@ plotElement.textContent = cropInfo.stages[stage];
 
 if (growth >= 100) {
     plotElement.textContent = "✨" + cropInfo.stages[2];
+    plotElement.title = "Ready to harvest";
 }
         }
+
 plotElement.addEventListener("click", function() {
     if (plot.crop == null) {
         plantCrop(plot, selectedCrop);
+        showCropInfo(plot);
+    } else if (canHarvestCrop(plot)) {
+        let cropType = plot.crop.type;
+        let yieldAmount = harvestCrop(plot);
+
+        lastHarvest = `Harvested ${yieldAmount} units of ${crops[cropType].name}`;
     } else {
         waterPlot(plot);
+        showCropInfo(plot);
     }
 
-    showCropInfo(plot);
     updateScreen();
 });
 
@@ -61,6 +71,13 @@ plotElement.addEventListener("click", function() {
 }
 function showCropInfo(plot) {
     let info = document.getElementById("cropInfo");
+
+if (lastHarvest !="") {
+    info.innerHTMl = `
+    <p>${lastHarvest}</p>
+    `;
+    return;
+}
 
     if (plot.crop == null) {
         info.innerHTML =`
@@ -82,9 +99,20 @@ function showCropInfo(plot) {
         `;
 }
 
+function showHarvestStats() {
+    let harvest = simulation.harvest;
+
+    document.getElementById("totalCrops").textContent = harvest.totalCrops;
+    document.getElementById("totalYield").textContent = harvest.totalYield;
+    document.getElementById("wheatYield").textContent = harvest.wheat;
+    document.getElementById("cornYield").textContent = harvest.corn;
+    document.getElementById("carrotYield").textContent = harvest.carrot;
+}
+
 function updateScreen(){
     showWeather();
     showFarm();
+    showHarvestStats();
 }
 
 document.getElementById("wheatButton").addEventListener("click", function() {
@@ -117,5 +145,12 @@ document.getElementById("temperatureInput").addEventListener("input", function()
 
     document.getElementById("temperatureValue").textContent = this.value;
 
+    updateScreen();
+});
+
+document.getElementById("sunlightInput").addEventListener("input", function() {
+    simulation.weather.sunlight = number(this.value);
+
+    document.getElementById("sunlightValue").textContent = this.value;
     updateScreen();
 });
