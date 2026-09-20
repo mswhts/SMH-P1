@@ -202,7 +202,7 @@ function showSeasonInfo() {
     document.getElementById("seasonRainfall").textContent = season.rainfallMin.toFixed(1) + "-" +
     season.rainfallMax.toFixed(1);
 
-    document.getElementById("seasonSunlight").textContent = season.sunlight.toFixed(1) + "-" +
+    document.getElementById("seasonSunlight").textContent = season.sunlightMin.toFixed(1) + "-" +
     season.sunlightMax.toFixed(1);
 }
 
@@ -300,7 +300,7 @@ document.getElementById("startButton").addEventListener("click", function() {
 
 });
 document.getElementById("pauseButton").addEventListener("click", function() {
-    pauseSimualation();
+    pauseSimulation();
     document.getElementById("simulationStatus").textContent = "Paused";
 
     document.getElementById("simulationSpeed").textContent = "1x";
@@ -315,6 +315,7 @@ document.getElementById("speedInput").addEventListener("change", function() {
         document.getElementById("simulationStatus").textContent =
         "Running";
     }
+    updateScreen();
 });
 
 
