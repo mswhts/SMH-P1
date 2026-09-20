@@ -50,9 +50,14 @@ if (growth >= 100) {
 
 plotElement.addEventListener("click", function() {
     if (plot.crop == null) {
-        plantCrop(plot, selectedCrop);
+    let planted = plantSelectedCrop(plot, selectedCrop);
+
+    if (planted) {
         showCropInfo(plot);
-    } else if (canHarvestCrop(plot)) {
+    } else {
+        lastHarvest = "Not enough seeds to plant this crop.";
+    }
+} else if (canHarvestCrop(plot)) {
         let cropType = plot.crop.type;
         let yieldAmount = harvestCrop(plot);
 
@@ -91,11 +96,21 @@ if (lastHarvest !="") {
     }
 
     let cropInfo = crops[plot.crop.type];
+let growthStage = getCropGrowthStage(plot);
+let healthStatus = getCropHealthStatus(plot);
+let moistureStatus = getMoistureStatus(plot);
+let soilStatus = getSoilStatus(plot);
 
     info.innerHTML = ` <p>Crop: ${cropInfo.name}</p>
         <p>Growth: ${Math.round(plot.crop.growth)}%</p>
+        <p>Growth stage: ${growthStage}</p>
         <p>Health: ${Math.round(plot.crop.health)}%</p>
+        <p>Health Status: ${healthStatus}</p>
         <p>Soil moisture: ${Math.round(plot.soil.moisture)}</p>
+       <p>Moisture status: ${moistureStatus}</p>
+       <p>Soil quality: ${plot.soil.quality}</p>
+       <p>Nutrients: ${plot.soil.nutrients}</p>
+<p>Soil status: ${soilStatus}</p>
         `;
 }
 
@@ -109,10 +124,81 @@ function showHarvestStats() {
     document.getElementById("carrotYield").textContent = harvest.carrot;
 }
 
+function showFarmManagement() {
+    let farm = simulation.farm;
+    let statistics = farm.statistics;
+
+    document.getElementById("farmMoney").textContent =
+    farm.money;
+document.getElementById("plantedCrops").textContent =
+countEmptyPlots();
+
+document.getElementById("emptyPlots").textContent =
+countEmptyPlots();
+document.getElementById("healthyCrops").textContent =
+countHealthyCrops();
+
+document.getElementById("unhealthyCrops").textContent =
+countUnhealthyCrops();
+document.getElementById("farmValue").textContent =
+getFarmValue();
+document.getElementById("wheatSeeds").textContent =
+farm.seeds.wheat;
+document.getElementById("cornSeeds").textContent =
+farm.seeds.corn;
+document.getElementById("carrotSeeds").textContent =
+farm.seeds.carrot;
+document.getElementById("farmAverageHealth").textContent =
+getAverageFarmHealth().toFixed(1);
+document.getElementById("farmAverageGrowth").textContent = 
+getAverageFarmGrowth().toFixed(1);
+
+document.getElementById("farmAverageMoisture").textContent =
+getFarmMoisture().toFixed(1);
+document.getElementById("farmEfficiency").textContent =
+getFarmEfficiency().toFixed(1);
+document.getElementById("wateredPlots").textContent =
+farm.statistics.watered;
+
+
+
+
+}
+
+
+function showAnalytics() {
+    let history = simulation.history;
+
+    document.getElementById("recordedHours").textContent = history.time.length; 
+if (history.crops.length == 0) {
+    document.getElementById("averageMoisture").textContent = "0";
+    document.getElementById("averageHealth").textContent = "0";
+    document.getElementById("averageGrowth").textContent = "0";
+    document.getElementById("growingCrops").textContent = "0";
+    document.getElementById("matureCrops").textContent = "0";
+return;
+}
+let latestSoil = history.soil[history.soil.length - 1];
+
+let latestCrops = history.crops[history.crops.length - 1];
+document.getElementById("averageMoisture").textContent = latestSoil.averageHealth.toFixed(1);
+document.getElementById("averageHealth").textContent =
+latestCrops.averageHealth.toFixed(1);
+document.getElementById("averageGrowth").textContent =
+latestCrops.averageGrowth.toFixed(1);
+document.getElementById("growingCrops").textContent =
+latestCrops.growingCrops;
+document.getElementById("MatureCrops").textContent =
+latestCrops.matureCrops;
+
+}
+
 function updateScreen(){
     showWeather();
     showFarm();
     showHarvestStats();
+    showAnalytics();
+    showFarmManagement();
 }
 
 document.getElementById("wheatButton").addEventListener("click", function() {
@@ -128,8 +214,7 @@ document.getElementById("carrotButton").addEventListener("click", function() {
 });
 
 document.getElementById("advanceButton").addEventListener("click", function(){
-    updateTime();
-    updateScreen();
+    runSimulationStep();
 });
 
 document.getElementById("rainfallInput").addEventListener("input", function() {
@@ -154,3 +239,66 @@ document.getElementById("sunlightInput").addEventListener("input", function() {
     document.getElementById("sunlightValue").textContent = this.value;
     updateScreen();
 });
+document.getElementById("buyWheat").addEventListener("click", function()  {
+    
+    buySeeds("wheat", 5);
+    updateScreen();
+});
+document.getElementById("buyCorn").addEventListener("click", function() {
+    buySeeds("corn", 5);
+    updateScreen();
+});
+document.getElementById("buyCarrot").addEventListener("click", function () {
+    buySeeds("carrot", 5);
+    updateScreen();
+});
+
+Document.getElementById("waterALLButton").addEventListener("click", function() {
+    let watered = 0;
+
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop != null) {
+            waterSelectedPlot(plot);
+            watered++;
+        }
+    }
+
+    if (watered > 0) {
+        document.getElementById("actionMessage").textContent = `Watered ${watered} crops.`;
+
+    } else {
+        document.getElementById("actionMessage").textContent =
+        "There are no crops to water"
+    }
+    updateScreen();
+});
+document.getElementById("removeCropButton").addEventListener("click", function() {
+    document.getElementById("actionMessage").textContent =
+    "Select a crop plot first.";
+});
+
+document.getElementById("startButton").addEventListener("click", function() {
+    startSimulation();
+    
+    document.getElementById("simulationStatus").textContent = "Running";
+    document.getElementById("simulationSpeed").textContent = simulation.speed + "x"; 
+
+});
+document.getElementById("pauseButton").addEventListener("click", function() {
+    pauseSimualation();
+    document.getElementById("simulationStatus").textContent = "Paused";
+
+    document.getElementById("simulationSpeed").textContent = "1x";
+});
+document.getElementById("speedInput").addEventListener("change", function() {
+    let speed = Number(this.value);
+    setSimulationSpeed(speed);
+    document.getElementById("simulationSpeed").textContent =
+    speed + "x";
+
+    if (simulation.running) {
+        document.getElementById("simulationStatus").textContent =
+        "Running";
+    }
+});
+
