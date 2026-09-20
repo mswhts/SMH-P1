@@ -1,7 +1,50 @@
 let simulation = {
     day: 1,
     hour: 0,
+    running: false,
+    speed: 1,
+    timer: null,
     season: "autumn",
+    seasons: {
+        autumn: {
+            name: "Autumn",
+            startDay: 1,
+            temperatureMin: 10,
+            temperatureMax: 24,
+            rainfallMin: 0,
+            rainfallMax: 8,
+            sunlightMin: 6,
+            sunlightMax: 10,
+            humidityMin: 50,
+            humidityMax: 75,
+            windMin: 5,
+            windMax: 15
+        },
+
+        winter: {
+            name: "Winter",
+            startDay: 15,
+            temperatureMin:5,
+            temperatureMax: 18,
+            rainfallMin: 1,
+            rainfallMax: 10,
+            sunlightMin: 4,
+            sunlightMax: 8,
+            humidityMin: 60,
+            humidityMax: 85,
+            windMin: 8,
+            windMax: 20
+        },
+summer: {
+    name: "Summer",
+    startDay: 43,
+    temperatureMin: 18,
+temperatureMax: 18,
+
+
+}
+
+    },
     harvest: {
         totalCrops: 0,
         totalYield: 0,
@@ -28,7 +71,40 @@ normalWind: 10
     farm: {
         width: 10,
         height: 10,
-        plots: []
+        plots: [],
+        money: 500,
+        seeds: {
+            wheat: 10,
+            corn: 10,
+            carrot: 10
+        },
+        seedCosts: {
+            wheat: 5,
+            corn: 8,
+            carrot: 4,
+        },
+        cropIncome: {
+            wheat: 12,
+            corn: 18,
+            carrot: 9,
+        },
+        statistics: {
+            planted: 0,
+            harvested: 0,
+            watered: 0,
+            moneyEarned: 0,
+            moneyspent: 0,
+            actions: 0,
+failedActions: 0
+        }
+    },
+
+    history: {
+        time: [],
+        weather: [],
+        soil: [],
+        crops: [],
+        harvest: []
     }
 };
 
@@ -63,6 +139,7 @@ updateWeatherEvent();
 updateWeatherEventDuration();
 updateSoil();
 updateCrops();
+recordsSimulationHistory();
 }
 
 function plantCrop(plot, cropType) {
@@ -83,6 +160,63 @@ function waterPlot(plot) {
     if(plot.soil.moisture > 100) {
         plot.soil.moisture = 100;
     }
+}
+
+function canPlantCrop(plot, cropType) {
+    if (plot.crop != null) {
+        return false;
+    }
+    if (crops[cropType] == null) {
+        return false;
+    }
+    if (simulation.farm.seeds[cropType] <= 0) {
+        return false;
+    }
+    return true;
+}
+function getCropSeedCost(cropType) {
+    if (simulation.farm.seedCosts[cropType] == null) {
+        return 0;
+    }
+    return simulation.farm.seedCosts[cropType];
+}
+function buySeeds(cropType, amount) {
+    if (crops[cropType] == null) {
+        return false;
+    }
+    if (amount <= 0) {
+        return false;
+    }
+    simulation.farm.money -= cost;
+    simulation.farm.moneyspent += cost;
+    simulation.farm.seeds[cropType] += amount;
+
+    return true;
+}
+function plantSelectedCrop(plot, cropType) {
+    if (!canPlantCrop(plot, cropType)) {
+        return false;
+    }
+    let cropInfo = crops[cropType];
+    plot.crop = {
+        type: cropType,
+        growth: 0,
+        health: cropInfo.health
+    };
+    simulation.farm.seeds[cropType]--;
+    simulation.farm.statistics.planted++;
+
+    return true;
+}
+
+function removeCrop(plot) {
+    if (plot.crop == null) {
+        return false;
+    }
+    let cropType = plot.crop.type;
+    plot.crop = null;
+    simulation.farm.seeds[cropType]++;
+    return true;
 }
 
 function updateCrops() {
@@ -292,6 +426,11 @@ function harvestCrop(plot) {
     simulation.harvest.totalCrops++;
     simulation.harvest.totalYield += yieldAmount;
     simulation.harvest[cropType] += yieldAmount;
+    let incomePerUnit = simulation.farm.cropIncome[cropType];
+    let income = yieldAmount * incomePerUnit;
+    simulation.farm.money += income;
+    simulation.farm.statistics.moneyEarned += income;
+    simulation.farm.statistics.harvested++;
 
     plot.soil.nutrients -= cropInfo.nutrientUse;
 
@@ -318,3 +457,331 @@ function harvestCrop(plot) {
     }
 return 0.6;
  }
+
+ function countPlantedCrops() {
+    let count = 0;
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop != null) {
+            count++;
+        }
+    }
+    return count;
+ }
+
+ function countEmptyPlots() {
+    let count = 0;
+
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop == null) {
+            count++;
+        }
+    }
+    return count;
+ }
+
+function countHealthyCrops() {
+    let count = 0;
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop != null && plot.crop.health >= 75) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function countUnhealthyCrops() {
+    let count = 0;
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop != null && plot.crop.health < 50) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function getFarmValue() {
+    let value = simulation.farm.money;
+    for (let cropType in simulation.farm.seeds) {
+        let seedAmount = simulation.farm.seeds[cropType];
+        let seedCost = simulation.farm.seedCosts[cropType];
+        value += seedAmount * seedCost;
+    }
+    return value;
+}
+
+function getPlotStatus(plot) {
+    if (plot.crop == null) {
+        return "Empty";
+
+    }
+    if (plot.crop.health <= 25) {
+        return "Critical";
+    }
+    if (plot.crop.health < 50) {
+        return "Unhealthy";
+    }
+    if (plot.crop.growth >= 100) {
+        return "Ready";
+    }
+    if (plot.crop.growth >= 66) {
+        return "mature";
+    }
+    if (plot.crop.growth >= 33) {
+        return "Growing";
+    }
+    return "Seedling";
+}
+
+function getMoistureStatus(plot) {
+    let moisture = plot.soil.moisture;
+    if (moisture < 20) {
+        return "Very Dry"
+    }
+    if (moisture < 40) {
+        return "Dry"
+    }
+    if (moisture <= 80) {
+        return "Good";
+    }
+    if (moisture <= 100) {
+        return "Wet";
+    }
+    return "waterlogged";
+}
+
+function getSoilStatus(plot) {
+    let nutrients = plot.soil.nutrients;
+    if (nutrients < 20) {
+        return "Depleted";
+    }
+    if (nutrients < 40) {
+        return "Low";
+
+    }
+    if (nutrients < 70) {
+        return "Moderate";
+    }
+    return "Healthy"
+}
+
+function getCroopGrowthStage(plot) {
+    if (plot.crop == null) {
+        return "Empty";
+
+    }
+    let growth = plot.crop.growth;
+    if (growth < 33) {
+        return "Seedling";
+    }
+    if (growth < 66) {
+        return "Growing";
+    }
+    if (growth < 100) {
+        return "mature";
+    }
+    return "Ready to harvest"
+
+}
+
+function getCropHealthStatus(plot) {
+    if (plot.crop == null) {
+        return "No crop";
+    }
+    let health = plot.crop.health;
+    if (health >= 90) {
+        return "Excellent"
+    }
+    if (health >= 75) {
+        return "Healthy";
+    }
+    if (health >= 50) {
+        return "Fair";
+    }
+    if (health >= 25) {
+        return "poor";
+    }
+    return "Critical";
+}
+
+function waterSelectedPlot(plot) {
+    if (plot.crop == null) {
+        waterPlot(plot);
+        simulation.farm.statistics.watered++;
+        return true;
+    }
+    waterPlot(plot);
+    simulation.farm.statistics.watered++;
+
+    return true;
+}
+
+function recordFarmAction(success) {
+    simulation.farm.statistics.actions++;
+
+    if (!success) {
+        simulation.farm.statistics.failedActions++;
+    }
+}
+
+function getFarmEfficiency() {
+    let statistics = simulation.farm.statistics;
+
+    if (statistics.actions == 0) {
+        return 100;
+    }
+    let successfulActions =
+    statistics.actions - statistics.failedActions;
+
+    return (successfulActions / statistics.actions) * 100;
+}
+function getFarmCropCounts() {
+    let counts = {
+        wheat: 0,
+        corn: 0,
+        carrot: 0
+    };
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop !=null) {
+            counts[plot.crop.type]++;
+        }
+    }
+    return counts;
+}
+function getAverageFarmHealth() {
+    let totalHealth = 0;
+    let cropCount = 0;
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop != null) {
+            totalHealth += plot.crop.health;
+            cropCount++;
+        }
+    }
+    if (cropCount == 0) {
+        return 0;
+    }
+    return totalHealth / cropCount;
+}
+
+function getAverageFarmGrowth() {
+    let totalGrowth = 0;
+    let cropCount = 0;
+    for (let plot of simulation.farm.plots) {
+        if (plot.crop != null) {
+            totalGrowth += plot.crop.growth;
+            cropCount++;
+        }
+    }
+    if (cropCount == 0) {
+        return 0;
+    }
+    return totalGrowth / cropCount;
+}
+
+function getFarmMoisture() {
+    let totalMoisture = 0;
+    for (let plot of simulation.farm.plots) {
+        totalMoisture += plot.soil.moisture;
+    }
+    return totalMoisture / simulation.farm.plots.length;
+}
+
+function runSimulationStep() {
+    updateTime();
+    updateScreen();
+}
+function startSimulation() {
+    if (simulation.running) {
+        return;
+    }
+
+    simulation.running = true;
+    simulation.timer = setInterval(function() {
+        runSimulationStep();
+    }, 1000 / simulation.speed);
+}
+
+function pauseSimulation() {
+    simulation.running = false;
+    if (simulation.timer != null) {
+        clearInterval(simulation.timer);
+        simulation.timer = null;
+    }
+}
+
+function setSimulationSpeed(speed) {
+    if (speed <= 0) {
+        return;
+    }
+    simulation.speed = speed;
+
+    if (simulation.running) {
+        pauseSimulation();
+        startSimulation();
+    }
+}
+
+function createFarmPlots(){
+    simulation.farm.plots = [];
+
+    for (let y = 0; y < simulation.farm.height; y++) {
+        for (let x = 0, x < simulation.farm.width; x++) {
+            simulation.farm.plots.push({
+                x: x,
+                y: y,
+                crop: null,
+                soil: {
+                    moisture: 50,
+                    quality: 80,
+                    nutrients: 70
+                }
+            });
+        }
+    }
+}
+
+function resetSimulation() {
+    pauseSimulation();
+    simulation.day = 1;
+    simulation.hour = 0;
+    simulation.season = "autumn";
+    simulation.weatherEvent = "Normal";
+    simulation.weatherEventDuration = 0;
+    simulation.weather.temperature = 20;
+    simulation.weather.rainfall = 0;
+    simulation.weather.humidity = 60;
+    simulation.weather.sunlight = 8;
+    simulation.weather.wind = 10;
+    simulation.weather.normalTemperature = 20;
+simulation.weather.normalRainfall = 0;
+simulation.weather.normalWind = 10;
+
+simulation.harvest.totalCrops = 0;
+simulation.harvest.totalYield = 0;
+simulation.harvest.wheat = 0;
+simulation.harvest.corn = 0;
+simulation.harvest.carrot = 0;
+
+simulation.farm.money = 500;
+simulation.farm.seeds.wheat = 10;
+simulation.farm.seeds.corn = 10;
+simulation.farm.seeds.carrot = 10;
+
+simulation.farm.statistics.planted = 0;
+simulation.farm.statistics.harvested = 0;
+simulation.farm.statistics.watered = 0;
+simulation.farm.statistics.moneyEarned = 0;
+simulation.farm.statistics.moneySpent = 0;
+simulation.farm.statistics.actions = 0;
+simulation.farm.statistics.failedActions = 0;
+
+simulation.history.time = [];
+simulation.history.weather = [];
+simulation.history.soil = [];
+simulation.history.crops = [];
+simulation.history.harvest = [];
+
+createFarmPlots();
+lastHarvest = "";
+updateScreen();
+
+}
