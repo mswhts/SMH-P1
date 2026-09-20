@@ -6,6 +6,7 @@ function showWeather() {
 
     document.getElementById("weather").innerHTML = `
         <p>Day: ${simulation.day}</p>
+        <p>Season: ${simulation.seasons[simulation.season].name}</p>
         <p>Hour: ${simulation.hour}</p>
         <p>Temperature: ${weather.temperature.toFixed(1)}°C</p>
         <p>Humidity: ${weather.humidity.toFixed(1)}%</p>
@@ -193,11 +194,25 @@ latestCrops.matureCrops;
 
 }
 
+function showSeasonInfo() {
+    let season = simulation.seasons[simulation.season];
+
+    document.getElementById("currentSeason").textContent = season.name;
+    document.getElementById("seasonTemperature").textContent = season.temperatureMin + "-" + season.temperatureMax;
+    document.getElementById("seasonRainfall").textContent = season.rainfallMin.toFixed(1) + "-" +
+    season.rainfallMax.toFixed(1);
+
+    document.getElementById("seasonSunlight").textContent = season.sunlight.toFixed(1) + "-" +
+    season.sunlightMax.toFixed(1);
+}
+
+
 function updateScreen(){
     showWeather();
     showFarm();
     showHarvestStats();
     showAnalytics();
+    showSeasonInfo
     showFarmManagement();
 }
 
@@ -301,4 +316,5 @@ document.getElementById("speedInput").addEventListener("change", function() {
         "Running";
     }
 });
+
 
