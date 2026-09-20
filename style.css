@@ -36,3 +36,54 @@ button {
 justify-content: center;
 font-size: 11px;
 }
+#farmManagement {
+    background: #fff8ed;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+#farmManagement p {
+    margin: 8px;
+}
+
+#farmManagement button {
+    padding: 5px 10px;
+    font-size: 14px;
+    margin-left: 8px;
+}
+
+#farmActions {
+    background: #fff8ed;
+    padding: 20px;
+    margin: 20px auto;
+max-width: 500px;
+}
+#farmActions button {
+    padding: 8px 12px;
+    margin: 5px;
+}
+#actionMessage {
+    min-height: 20px;
+    font-weight: bold;
+}
+
+#simulationControls {
+    background: #fff8ed;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+#simulationControls button {
+    margin: 5px;
+}
+
+#simulationControls select {
+    padding: 5px;
+    font-size: 15px;
+}
+
+#simulationStatus, 
+#simulationSpeed {
+    font-weigth: bold;
+}
+ 
