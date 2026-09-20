@@ -1,3 +1,4 @@
+
 function updateWeather() {
     simulation.weather.temperature += (Math.random() * 2) - 1;
     simulation.weather.humidity += (Math.random() * 4) - 2;
