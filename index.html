@@ -36,7 +36,34 @@
     <span id="sunlightValue">8</span> hours
 </div>
 
-    <button id="advanceButton">Advance 1 Hour</button>
+    <div id="simulationControls">
+        <h3>Simulation Controls</h3>
+<button id="startButton">Start</button>
+<button id="pauseButton">Pause</button>
+<button id="advanceButton">Advance 1 hour</button>
+<button id="resetButton">Reset</button>
+<p>
+    simulation speed:
+    <select id="speedInput">
+<option value="0.5">0.5x</option>
+<option value="1" selected>1x</option>
+<option value="2">2x</option>
+<option value="4">4x</option>
+<option value="8">8x</option>
+
+    </select>
+</p>
+<p>
+    Status:
+    <span id="simulationStatus">Paused</span>
+</p>
+
+<p>
+    speed:
+    <span id="simulationSpeed">1x</span>
+</p>
+
+    </div>
 
 
     <h2>Farm</h2>
@@ -51,6 +78,69 @@
 <p>Wheat yield: <span id="wheatYield">0</span></p>
 <p>Corn yield: <span id="cornYield">0</span></p>
 <p>Carrot yield: <span id="carrotYield">0</span></p>
+</div>
+
+<div id="farmManagement">
+    <h3>Farm management</h3>
+<p>Money: $<span id="farmMoney">500</span></p>
+<p>Planted crops: <span id="plantedCrops">0</span></p>
+<p>Empty Plots: <span id="emptyPlots">100</span></p>
+<p>healthy crops: <span id="healthyCrops">0</span></p>
+<p>unhealthy crops: <span id="unhealthyCrops">0</span></p>
+<p>Farm value: $<span id ="farmValue">500</span></p>
+<h4>Seeds</h4>
+<p>
+    Wheat seeds:
+    <span id="wheatSeeds">10</span>
+    <button id="buyWheat">Buy 5</button>
+</p>
+<p>
+    Corn seeds:
+    <span id="cornSeeds">10</span>
+<button id="buyCorn">Buy 5</button>
+</p>
+<p>
+    Carrot seeds:
+    <span id="carrotSeeds">10</span>
+    <button id ="buyCarrot">Buy 5</button>
+</p>
+<p>Average crop health: <span id="farmAverageHealth">0</span>%</p>
+<p>Average crop growth: <span id="farmAverageGrowth">0</span>%</p>
+<p>Average soil moisture: <span id="farmAverageMoisture">0</span>%</p>
+<p>Farm efficiency: <span id="farmEfficiency">100</span>%</p>
+<p>Plots watered: <span id="wateredPlots">0</span>%</p>
+</div>
+
+<div id="farmActions">
+    <h3>Farm Actions</h3>
+<p id="actionMessage">Select a plot to interact with it.</p>
+<button id="waterALLButton">Water ALL Crops</button>
+<button id="removeCropButton">Remove Selected Crop</button>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div id="analytics">
+    <h3>Simulation Analytics</h3>
+
+    <p>Recorded hours: <span id="recordedHours">0</span></p>
+    <p>Average soil moisture: <span id="averageMoisture">0</span></p>
+<p>Average crop health: <span id="averageHealth">0</span></p>
+<p>Average crop growth: <span id="averageGrowth">0</span></p>
+<p>Growing crops: <span id="growingCrops">0</span></p>
+<p>Mature crops: <span id="matureCrops">0</span></p>
 </div>
 
      <script src="crops.js"></script>
