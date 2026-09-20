@@ -268,7 +268,9 @@ if (crop.growth > 100) {
 
             
             calculateCropHealth(plot);
-let calculateWeatherHealthModifier = calculateWeatherHealthModifier(plot);
+let weatherHealthModifier = calculateWeatherHealthModifier(plot);
+
+crop.health += weatherHealthModifier;
 crop.health += calculateWeatherHealthModifier;
 
             if (crop.growth > 100) {
@@ -600,7 +602,7 @@ function getSoilStatus(plot) {
     return "Healthy"
 }
 
-function getCroopGrowthStage(plot) {
+function getCropGrowthStage(plot) {
     if (plot.crop == null) {
         return "Empty";
 
