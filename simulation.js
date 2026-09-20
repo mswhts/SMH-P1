@@ -760,7 +760,7 @@ function createFarmPlots(){
     simulation.farm.plots = [];
 
     for (let y = 0; y < simulation.farm.height; y++) {
-        for (let x = 0, x < simulation.farm.width; x++) {
+        for (let x = 0; x < simulation.farm.width; x++) {
             simulation.farm.plots.push({
                 x: x,
                 y: y,
