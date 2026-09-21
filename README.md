@@ -12,7 +12,7 @@ techstack used:
  the project isn't in its best state rn, sorry for that hope you understand.
 how to use:
 1. Open the demo link -> https://mswhts.github.io/SMH-P1/
-2. Select a crop to plant.
+2. move sliders, select a crop then click a plot to plant (the numbers on the plot repersents the soil).
 3. Click the empty farm field to plant a crop.
 4. Observe weather, soil moisture and crop state.
 5. Water crops, if needed.
