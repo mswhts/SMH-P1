@@ -207,11 +207,19 @@ function buySeeds(cropType, amount) {
     if (crops[cropType] == null) {
         return false;
     }
+
     if (amount <= 0) {
         return false;
     }
+
+    let cost = getCropSeedCost(cropType) * amount;
+
+    if (simulation.farm.money < cost) {
+        return false;
+    }
+
     simulation.farm.money -= cost;
-    simulation.farm.moneyspent += cost;
+    simulation.farm.statistics.moneyspent += cost;
     simulation.farm.seeds[cropType] += amount;
 
     return true;
