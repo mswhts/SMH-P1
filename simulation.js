@@ -276,9 +276,7 @@ if (crop.growth > 100) {
 
             
             calculateCropHealth(plot);
-let weatherHealthModifier = calculateWeatherHealthModifier(plot);
-
-crop.health += weatherHealthModifier;
+let calculateWeatherHealthModifier = calculateWeatherHealthModifier(plot);
 crop.health += calculateWeatherHealthModifier;
 
             if (crop.growth > 100) {
