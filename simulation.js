@@ -252,38 +252,28 @@ function removeCrop(plot) {
 
 function updateCrops() {
     for (let plot of simulation.farm.plots) {
-
         if (plot.crop != null) {
             let crop = plot.crop;
             let cropInfo = crops[crop.type];
-
             let growthAmount = 100 / cropInfo.growthTime;
             let environmentalModifier = calculateEnvironmentalGrowthModifier(plot);
-            
-
-            if (plot.soil.moisture >= cropInfo.idealMoisture) {
-                 growthAmount *= 1;
-            } else {
-                 growthAmount * 0.5;
+            if (plot.soil.moisture < cropInfo.idealMoisture) {
+                growthAmount *= 0.5;
             }
-growthAmount *= environmentalModifier;
-
-crop.growth += growthAmount;
-
-if (crop.growth > 100) {
-    crop.growth = 100;
-}
-
-            
-            calculateCropHealth(plot);
-let calculateWeatherHealthModifier = calculateWeatherHealthModifier(plot);
-crop.health += calculateWeatherHealthModifier;
-
+            growthAmount *= environmentalModifier;
+            crop.growth += growthAmount;
             if (crop.growth > 100) {
                 crop.growth = 100;
             }
+            calculateCropHealth(plot);
+            let weatherHealthModifier = calculateWeatherHealthModifier(plot);
+            crop.health += weatherHealthModifier;
+
             if (crop.health < 0) {
                 crop.health = 0;
+            }
+            if (crop.health > 100) {
+                crop.health = 100;
             }
         }
     }
@@ -377,10 +367,7 @@ function calculateMoistureYieldModifier(plot) {
 }
 
 function calculateTemperatureYieldModifier() {
-    let temperature = simulation.weather.temperature;
-    let bestModifier = 1;
-
-    for (let plot of simulation.farm.plots) {
+   
         
             let cropInfo = crops[plot.crop.type];
             let temperature = simulation.weather.temperature;
@@ -409,7 +396,7 @@ function calculateTemperatureYieldModifier() {
             }
             return 0.6;
             }
-        }
+        
     
  function calculateHealthYieldModifier(plot) {
     let health = plot.crop.health;
