@@ -268,7 +268,7 @@ document.getElementById("buyCarrot").addEventListener("click", function () {
     updateScreen();
 });
 
-Document.getElementById("waterALLButton").addEventListener("click", function() {
+document.getElementById("waterALLButton").addEventListener("click", function() {
     let watered = 0;
 
     for (let plot of simulation.farm.plots) {
@@ -292,7 +292,7 @@ document.getElementById("removeCropButton").addEventListener("click", function()
     "Select a crop plot first.";
 });
 
-Document.getElementById("startButton").addEventListener("click", function() {
+document.getElementById("startButton").addEventListener("click", function() {
     startSimulation();
     
     document.getElementById("simulationStatus").textContent = "Running";
