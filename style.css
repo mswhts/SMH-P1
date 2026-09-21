@@ -1,100 +1,315 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
+    margin: 0;
+    padding: 20px;
     font-family: Arial, sans-serif;
-    background: #f5ead7;
+    background: #e9dfc9;
     color: #3d2b1f;
-    text-allign: center;
+}
+
+h1 {
+    text-align: center;
+    margin: 0 0 18px;
+    font-size: 30px;
+    color: #4b3525;
+}
+
+h2 {
+    margin: 0 0 12px;
+}
+
+h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+h4 {
+    margin-bottom: 8px;
 }
 
 button {
-    padding: 10px 18px;
-    font-size: 16px;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #7b9b5b;
+    color: white;
+    transition: 0.15s;
+}
+
+button:hover {
+    background: #668547;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+input[type="range"] {
+    width: 150px;
+    accent-color: #78945a;
     cursor: pointer;
 }
 
+select {
+    padding: 6px 8px;
+    border: 1px solid #cbbda4;
+    border-radius: 6px;
+    background: white;
+}
+
+
 #weather {
-    background: #fff8ed;
-    padding: 15px;
-    margin: 20px auto;
-    max-width: 400px;
-}
-
-#farm {
-    display: grid;
-    grid-template-columns: repeat(10, 35px);
-    gap: 4px;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.plot {
-    width: 35px;
-    height: 35px;
-    background: #a9784f;
-    color: white;
+    background: #fffaf0;
+    border: 1px solid #d8ccb8;
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin: 0 auto 15px;
+    max-width: 700px;
     display: flex;
+    justify-content: space-around;
     align-items: center;
-justify-content: center;
-font-size: 11px;
-}
-#farmManagement {
-    background: #fff8ed;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 500px;
-}
-#farmManagement p {
-    margin: 8px;
+    gap: 15px;
+    box-shadow: 0 2px 6px rgba(70, 50, 30, 0.08);
 }
 
-#farmManagement button {
-    padding: 5px 10px;
-    font-size: 14px;
-    margin-left: 8px;
+#weather p {
+    margin: 3px 0;
 }
 
-#farmActions {
-    background: #fff8ed;
-    padding: 20px;
-    margin: 20px auto;
-max-width: 500px;
+#cropSelection {
+    text-align: center;
+    margin-bottom: 15px;
 }
-#farmActions button {
-    padding: 8px 12px;
-    margin: 5px;
+
+#cropSelection button {
+    margin: 3px;
+    background: #806044;
 }
-#actionMessage {
-    min-height: 20px;
+
+#cropSelection button:hover {
+    background: #684d37;
+}
+
+
+#weatherControls,
+#seasonInfo,
+#simulationControls,
+#farmManagement,
+#farmActions,
+#analytics,
+#cropInfo,
+body > div:not(#weather):not(#cropSelection):not(#farm):not(#harvestStats) {
+    background: #fffaf0;
+    border: 1px solid #d8ccb8;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(70, 50, 30, 0.07);
+}
+
+
+#weatherControls {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#weatherControls label {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+
+#seasonInfo {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+}
+
+#seasonInfo p {
+    display: inline-block;
+    margin: 5px 15px 5px 0;
+}
+
+#seasonInfo span {
     font-weight: bold;
 }
 
+body > div > label {
+    font-weight: bold;
+}
+
+body > div {
+    margin-bottom: 10px;
+}
+
+body > div:not(#weather):not(#cropSelection):not(#farm):not(#harvestStats) {
+    padding: 10px 15px;
+}
+
+
 #simulationControls {
-    background: #fff8ed;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 500px;
+    padding: 14px 18px;
+    margin-bottom: 15px;
 }
+
 #simulationControls button {
-    margin: 5px;
+    margin: 3px;
 }
 
-#simulationControls select {
-    padding: 5px;
-    font-size: 15px;
+#simulationControls p {
+    margin: 9px 0 0;
 }
 
-#simulationStatus, 
+#simulationStatus,
 #simulationSpeed {
-    font-weigth: bold;
-}
- 
-#seasonInfo {
-    background: #fff8ed;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 500px;
-}
-#seasonInfo p {
-    margin: 8px;
+    font-weight: bold;
 }
 
- 
+
+#farm {
+    display: grid;
+    grid-template-columns: repeat(10, 42px);
+    gap: 5px;
+    justify-content: center;
+    padding: 16px;
+    background: #8e633f;
+    border: 7px solid #67452e;
+    border-radius: 12px;
+    width: fit-content;
+    margin: 0 auto 12px;
+    box-shadow: 0 4px 10px rgba(70, 45, 25, 0.18);
+}
+
+.plot {
+    width: 42px;
+    height: 42px;
+    background: #a9784f;
+    border: 2px solid #815737;
+    border-radius: 5px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.plot:hover {
+    background: #b98558;
+    transform: scale(1.06);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+#cropInfo {
+    max-width: 500px;
+    margin: 0 auto 12px;
+    padding: 12px 16px;
+}
+
+#cropInfo p {
+    margin: 5px 0;
+}
+
+
+#harvestStats {
+    background: #fffaf0;
+    border: 1px solid #d8ccb8;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+
+#harvestStats p {
+    display: inline-block;
+    margin: 4px 14px 4px 0;
+}
+
+#harvestStats span {
+    font-weight: bold;
+}
+
+#farmManagement {
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+
+#farmManagement p {
+    margin: 7px;
+}
+
+#farmManagement button {
+    padding: 5px 9px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+#farmManagement h4 {
+    border-top: 1px solid #d8ccb8;
+    padding-top: 10px;
+}
+
+
+#farmActions {
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+
+#farmActions button {
+    margin: 3px;
+}
+
+#actionMessage {
+    min-height: 18px;
+    font-weight: bold;
+}
+
+
+#analytics {
+    padding: 14px 18px;
+}
+
+#analytics p {
+    display: inline-block;
+    margin: 5px 15px 5px 0;
+}
+
+#analytics span {
+    font-weight: bold;
+}
+
+
+@media (max-width: 700px) {
+    body {
+        padding: 10px;
+    }
+
+    #weather {
+        display: block;
+        text-align: center;
+    }
+
+    #farm {
+        grid-template-columns: repeat(10, 30px);
+        gap: 3px;
+        padding: 10px;
+    }
+
+    .plot {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    #seasonInfo p,
+    #harvestStats p,
+    #analytics p {
+        display: block;
+    }
+}
