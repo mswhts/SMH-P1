@@ -292,7 +292,7 @@ document.getElementById("removeCropButton").addEventListener("click", function()
     "Select a crop plot first.";
 });
 
-document.getElementById("startButton").addEventListener("click", function() {
+Document.getElementById("startButton").addEventListener("click", function() {
     startSimulation();
     
     document.getElementById("simulationStatus").textContent = "Running";
