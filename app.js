@@ -202,12 +202,12 @@ function showSeasonInfo() {
     document.getElementById("seasonRainfall").textContent = season.rainfallMin.toFixed(1) + "-" +
     season.rainfallMax.toFixed(1);
 
-    document.getElementById("seasonSunlight").textContent = season.sunlightMin.toFixed(1) + "-" +
+    document.getElementById("seasonSunlight").textContent = season.sunlight.toFixed(1) + "-" +
     season.sunlightMax.toFixed(1);
 }
 
 
-function updateScreen(){
+function updateScreen() {
     showWeather();
     showFarm();
     showHarvestStats();
@@ -315,7 +315,5 @@ document.getElementById("speedInput").addEventListener("change", function() {
         document.getElementById("simulationStatus").textContent =
         "Running";
     }
-    updateScreen();
 });
-
 
